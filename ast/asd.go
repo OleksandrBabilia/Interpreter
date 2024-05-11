@@ -6,7 +6,7 @@ type Node interface {
 	TokenLiteranl() string
 }
 
-type Statment interface {
+type Statement interface {
 	Node
 	statmentNode() string
 }
@@ -17,7 +17,7 @@ type Expression interface {
 }
 
 type Program struct {
-	Statments []Statment
+	Statments []Statement
 }
 
 func (p *Program) TokenLiteranl() string {
