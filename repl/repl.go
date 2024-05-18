@@ -10,7 +10,7 @@ import (
 
 const PROMT = ">> "
 
-func Strat(in io.Reader, out io.Writer) {
+func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
 
 	for {

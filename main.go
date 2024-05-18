@@ -15,5 +15,5 @@ func main() {
 
 	fmt.Printf("Hello %s! This is Interpreter Shell by Oleksandr Babilia!\n", user.Username)
 	fmt.Printf("Feel Free to Type in Command\n")
-	repl.Strat(os.Stdin, os.Stdout)
+	repl.Start(os.Stdin, os.Stdout)
 }
