@@ -1,12 +1,15 @@
 package lexer
 
-import "interpreter/token"
+import (
+    "interpreter/token"
+    "fmt"
+)
 
 type Lexer struct {
 	input        string
 	position     int
 	readPosition int
-	ch           byte
+	ch           rune
 }
 
 func New(input string) *Lexer {
@@ -19,7 +22,7 @@ func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0 // ASCI Nul
 	} else {
-		l.ch = l.input[l.readPosition]
+        l.ch = []rune(l.input)[l.readPosition]
 	}
 	l.position = l.readPosition
 	l.readPosition += 1
@@ -29,7 +32,7 @@ func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
 	l.skipWhitespace()
-
+    // print(l.ch)
 	switch l.ch {
 	case '=':
 		if l.peekChar() == '=' {
@@ -87,6 +90,7 @@ func (l *Lexer) NextToken() token.Token {
 		if isLetter(l.ch) {
 			tok.Literal = l.readIndentifier()
 			tok.Type = token.LookupIdent(tok.Literal)
+            fmt.Println(tok)
 			return tok
 		} else if isDigit(l.ch) {
 			tok.Type = token.INT
@@ -94,6 +98,7 @@ func (l *Lexer) NextToken() token.Token {
 			return tok
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)
+            fmt.Println(tok)
 		}
 
 	}
@@ -102,7 +107,7 @@ func (l *Lexer) NextToken() token.Token {
 	return tok
 }
 
-func newToken(tokenType token.TokenType, ch byte) token.Token {
+func newToken(tokenType token.TokenType, ch rune) token.Token {
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
@@ -126,11 +131,17 @@ func (l *Lexer) readNumber() string {
 	return l.input[position:l.position]
 }
 
-func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+func isLetter(r rune) bool {
+    isLetter := ('a' <= r && r <= 'z') ||
+		('A' <= r && r <= 'Z') ||
+		('\u0400' <= r && r <= '\u04FF') || 
+		('\u0500' <= r && r <= '\u052F')    
+    fmt.Printf("Byte is %c and %t",r ,isLetter)
+    return isLetter
+
 }
 
-func isDigit(ch byte) bool {
+func isDigit(ch rune) bool {
 	return '0' <= ch && ch <= '9'
 }
 
@@ -140,11 +151,11 @@ func (l *Lexer) skipWhitespace() {
 	}
 }
 
-func (l *Lexer) peekChar() byte {
+func (l *Lexer) peekChar() rune {
 	if l.readPosition >= len(l.input) {
 		return 0
 	} else {
-		return l.input[l.readPosition]
+		return []rune(l.input)[l.readPosition] 
 	}
 }
 
